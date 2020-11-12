@@ -1,0 +1,5 @@
+meshes/*
+!meshes/.gitkeep
+/__pycache__
+results/*
+!results/.gitkeep
