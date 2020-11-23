@@ -8,6 +8,7 @@ import matplotlib
 matplotlib.rcParams['text.usetex'] = True
 import matplotlib.pyplot as plt
 import glob2
+import re
 from PIL import Image, ImageChops
 
 # Some useful class types to keep in mind
@@ -50,6 +51,18 @@ def vecToMesh(list, triangles, N=3):
     return newMesh
 
 
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
+def natural_keys(text):
+    '''
+    alist.sort(key=natural_keys) sorts in human order
+    http://nedbatchelder.com/blog/200712/human_sorting.html
+    (See Toothy's implementation in the comments)
+    '''
+    return [atoi(c) for c in re.split(r'(\d+)', text)]
+
+
 def loadMeshes(direc="meshes/", ply_Bool=True):
     '''
     Provided a directory of .ply meshes (default) otherwise .stl format. This function reads them in and returns a list of meshes
@@ -62,7 +75,7 @@ def loadMeshes(direc="meshes/", ply_Bool=True):
     else:
         paths = glob2.glob(direc + "*.stl")
 
-    paths = sorted(paths)  # makes sure its in the correct order
+    paths = sorted(paths,key=natural_keys)  # makes sure its in the correct order
     meshes = [o3d.io.read_triangle_mesh(path) for path in paths]
     return meshes
 
