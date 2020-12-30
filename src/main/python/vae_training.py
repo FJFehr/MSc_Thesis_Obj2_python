@@ -212,14 +212,14 @@ def testPredictSave(model, testingData, triangles, mean, path, dataName):
 
         # Plot the original target
         if (dataName == "Femur"):
-            meshVisSave(currentMesh, path+"original", col, cameraName="femur")
+            meshVisSave(currentMesh, path+"original"+str(i), col, cameraName="femur")
         else:
-            meshVisSave(currentMesh, path+"original", col, cameraName="faust")
+            meshVisSave(currentMesh, path+"original"+str(i), col, cameraName="faust")
 
         if(dataName == "Femur"):
-            meshVisSave(predictionMesh, path+"prediction", col, cameraName= "femur")
+            meshVisSave(predictionMesh, path+"prediction"+str(i), col, cameraName="femur")
         else:
-            meshVisSave(predictionMesh, path+"prediction", col, cameraName= "faust")
+            meshVisSave(predictionMesh, path+"prediction"+str(i), col, cameraName="faust")
 
 
 
@@ -240,7 +240,7 @@ def trainingFunction(data, triangles, mean,
     trainingScheme = config["trainingScheme"]
 
     # make directories
-    results_path = "results/"+ dataName + modelName + trainingScheme + "lat" + latent_dim +"int" + intermediate_dim
+    results_path = "results/"+ dataName + modelName + trainingScheme + initialiser + activations
     metrics_path = results_path+ "/modelMetrics"
     trainingLoss_path = results_path+ "/trainingLoss"
     testingLoss_path = results_path + "/testingLoss"

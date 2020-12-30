@@ -3,7 +3,8 @@
 # Fabio Fehr
 
 library(tidyverse)
-setwd("../../media/fabio/Storage/UCT/Thesis/Coding/MSc_Thesis_Obj2_python/")
+setwd("/media/fabio/Storage/UCT/Thesis/Coding/MSc_Thesis_Obj2_python/")
+
 # getwd()
 
 # average errors over all 100, 50 observations per epoch
@@ -11,14 +12,12 @@ setwd("../../media/fabio/Storage/UCT/Thesis/Coding/MSc_Thesis_Obj2_python/")
 # training error is the error on all 99, 49 observations
 
 # USING means and CI
-epochGraph <- function(title, expName, lowerBound,upperBound,saveBoolean){
+epochGraph <- function(title, expName, plotTitle, lowerBound,upperBound,saveBoolean, totalEpochs=1000){
   
   dirName = paste0(title,expName)
   print(paste("Currently viewing ",title, expName))
   
-  epochsdf <- data.frame(Epochs = 1:1000) 
-  testNamedf <- data.frame(Name = rep("Validation error",100000))
-  trainNamedf <- data.frame(Name = rep("Training error",100000))
+  epochsdf <- data.frame(Epochs = 1:totalEpochs) 
   
   trainingfile = list.files(paste0("results/",
                                    dirName,
@@ -45,7 +44,8 @@ epochGraph <- function(title, expName, lowerBound,upperBound,saveBoolean){
     t() %>%                                 # make epochs rows and observations columns
     as.data.frame() 
   
-  n = NCOL(testingEpochs) # minus 1 for the added epoch label
+  n = NCOL(testingEpochs) # observations
+  nEpochs = NROW(testingEpochs) # number of epochs
   
   
   # Get means
@@ -65,13 +65,13 @@ epochGraph <- function(title, expName, lowerBound,upperBound,saveBoolean){
   testinglower = testingrow_mean - 1.96 * (testingrow_sd / sqrt(n))
   
   # Make dfs
-  trainingdf <- data.frame(Epochs = 1:1000,
+  trainingdf <- data.frame(Epochs = 1:nEpochs,
                            Loss = trainingrow_mean,
                            upper = trainingupper,
                            lower = traininglower,
                            name = "Training Loss")
   
-  testingdf <- data.frame(Epochs = 1:1000,
+  testingdf <- data.frame(Epochs = 1:nEpochs,
                           Loss = testingrow_mean,
                           upper = testingupper,
                           lower = testinglower,
@@ -86,9 +86,9 @@ epochGraph <- function(title, expName, lowerBound,upperBound,saveBoolean){
     geom_line(data =testingdf, aes(Epochs, Loss, colour = "Validation Loss"))+
     geom_ribbon(data =testingdf, aes(ymin=lower,ymax=upper),fill = "grey40",alpha=0.4)+
     theme_light()+
-    theme(legend.title = element_blank())+
+    theme(legend.title = element_blank(),text = element_text(size = 20))+
     scale_color_manual(values = colors)+
-    labs(title = title)
+    labs(title = plotTitle)
   
   # Save graph
   if(saveBoolean){
@@ -99,57 +99,58 @@ epochGraph <- function(title, expName, lowerBound,upperBound,saveBoolean){
 }
 
 # Experiment1 Vanilla VAE #################################################################################################
-epochGraph("FAUST","VAELOOCVtanh",20,100,saveBoolean=T)
-epochGraph("Femur","VAELOOCVtanh",0,50,saveBoolean=T)
+epochGraph("FAUST","VAELOOCVtanh","FAUST: latent100",50,100,saveBoolean=T)
+epochGraph("Femur","VAELOOCVtanh","Femur: latent50",0,50,saveBoolean=T)
 
 # training continues to decrease
+
 # validation plateaus (justifies 1000 is enough epochs)
 
 # Experiment 2: Deep models #################################################################################################
 
-epochGraph("FAUST","DeepVAELOOCVlat100int256",20,100,saveBoolean=T)
+epochGraph("FAUST","DeepVAELOOCVlat100int256","FAUST: latent100hidden256",20,100,saveBoolean=T)
 # Latent dimension means and sd =  100
 # intermediate dimension number of nodes = 256
 # training: continues to decrease
 # validation: plateaus at 300 epochs 
 # intersect: at 270 epochs
 
-epochGraph("Femur","DeepVAELOOCVlat50int256",0,50,saveBoolean=T)
+epochGraph("Femur","DeepVAELOOCVlat50int256","Femur: latent50hidden256",0,50,saveBoolean=T)
 # Latent dimension means and sd =  50
 # intermediate dimension number of nodes = 256
 # training: continues to decrease
 # validation: plateaus at 500 epochs (gets marginally smaller) 
 # intersect: no interesction!
 
-epochGraph("FAUST","DeepVAELOOCVlat100int512",20,100,saveBoolean=T)
+epochGraph("FAUST","DeepVAELOOCVlat100int512","FAUST: latent100hidden512",20,100,saveBoolean=T)
 # Latent dimension means and sd =  100
 # intermediate dimension number of nodes = 512
 # training: continues to decrease
 # validation: plateaus at 500 epochs 
 # intersect: at 500 epochs
 
-epochGraph("Femur","DeepVAELOOCVlat50int512",0,50,saveBoolean=T)
+epochGraph("Femur","DeepVAELOOCVlat50int512","Femur: latent50hidden512",0,50,saveBoolean=T)
 # Latent dimension means and sd =  50
 # intermediate dimension number of nodes = 512
 # training: continues to decrease
 # validation: plateaus at 1000 epochs (loss = 17.5)
 # intersect: no intersection
 
-epochGraph("FAUST","DeepVAELOOCVlat128int256",20,100,saveBoolean=T)
+epochGraph("FAUST","DeepVAELOOCVlat128int256","FAUST: latent128hidden256",20,100,saveBoolean=T)
 # Latent dimension means and sd =  128
 # intermediate dimension number of nodes = 256
 # training: continues to decrease
 # validation: plateaus at 300 epochs (loss = 65)
 # intersect: at 300
 
-epochGraph("Femur","DeepVAELOOCVlat128int256",0,50,saveBoolean=T)
+epochGraph("Femur","DeepVAELOOCVlat128int256","Femur: latent128hidden256",0,50,saveBoolean=T)
 # Latent dimension means and sd =  128
 # intermediate dimension number of nodes = 256
 # training: continues to decrease
 # validation: plateaus at 500 epochs (loss = 16)
 # intersect: no intersection
 
-epochGraph("FAUST","DeepVAELOOCVlat256int256",20,100,saveBoolean=T)
+epochGraph("FAUST","DeepVAELOOCVlat256int256","FAUST: latent256hidden256",20,100,saveBoolean=T)
 # Latent dimension means and sd =  256
 # intermediate dimension number of nodes = 256
 # training: continues to decrease
@@ -158,14 +159,60 @@ epochGraph("FAUST","DeepVAELOOCVlat256int256",20,100,saveBoolean=T)
 
 #####################
 
-epochGraph("FAUST","DeepVAELOOCVlat128int512",20,100,saveBoolean=T)
+epochGraph("FAUST","DeepVAELOOCVlat128int512","FAUST: latent128hidden512",20,100,saveBoolean=T)
 # Latent dimension means and sd =  128
 # intermediate dimension number of nodes = 256
 # training: continues to decrease
 # validation: plateaus at 300 epochs (loss = 65)
 # intersect: at 300
 
-epochGraph("Femur","DeepVAELOOCVlat128int512",0,50,saveBoolean=T)
+epochGraph("Femur","DeepVAELOOCVlat128int512","Femur: latent128hidden512",0,50,saveBoolean=T)
+# Latent dimension means and sd =  128
+# intermediate dimension number of nodes = 256
+# training: continues to decrease
+# validation: plateaus at 500 epochs (loss = 16)
+# intersect: no intersection
+
+##########################################################################################################################
+
+epochGraph("Femur","VAELOOCVlat50int300he_normal","Femur: heNormal",0,50,saveBoolean=T)
+# Latent dimension means and sd =  128
+# intermediate dimension number of nodes = 256
+# training: continues to decrease
+# validation: plateaus at 500 epochs (loss = 16)
+# intersect: no intersection
+
+epochGraph("Femur","VAELOOCVlat50int300glorot_uniform","Femur: glorotUniform",0,50,saveBoolean=T)
+# Latent dimension means and sd =  128
+# intermediate dimension number of nodes = 256
+# training: continues to decrease
+# validation: plateaus at 500 epochs (loss = 16)
+# intersect: no intersection
+
+####### FAUST ##############################
+
+epochGraph("FAUST","DeepVAELOOCVhe_normalelu","FAUST: eluHeNormal",20,200,saveBoolean=T,totalEpochs = 2000)
+# Latent dimension means and sd =  128
+# intermediate dimension number of nodes = 256
+# training: continues to decrease
+# validation: plateaus at 500 epochs (loss = 16)
+# intersect: no intersection
+
+epochGraph("FAUST","DeepVAELOOCVglorot_uniformelu","FAUST: eluGlorotUniform",20,100,saveBoolean=T,totalEpochs = 2000)
+# Latent dimension means and sd =  128
+# intermediate dimension number of nodes = 256
+# training: continues to decrease
+# validation: plateaus at 500 epochs (loss = 16)
+# intersect: no intersection
+
+epochGraph("FAUST","DeepVAELOOCVhe_normalleakyRelu","FAUST: leakyReluHeNormal",20,200,saveBoolean=T,totalEpochs = 2000)
+# Latent dimension means and sd =  128
+# intermediate dimension number of nodes = 256
+# training: continues to decrease
+# validation: plateaus at 500 epochs (loss = 16)
+# intersect: no intersection
+
+epochGraph("FAUST","DeepVAELOOCVglorot_uniformleakyRelu","FAUST: leakyReluGlorotUniform",20,100,saveBoolean=T,totalEpochs = 2000)
 # Latent dimension means and sd =  128
 # intermediate dimension number of nodes = 256
 # training: continues to decrease

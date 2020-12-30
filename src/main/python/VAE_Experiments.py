@@ -42,19 +42,18 @@ if __name__ == '__main__':
     # Simple experiment of adding a hidden layers. Changing the node amounts
     #
     # CONFIG Femur
-    config = {"modelName": ["DeepVAE"],
-              "dataName": ["Femur"],
-              "trainingScheme": ["LOOCV"],
-              "activations": ["leakyRelu"],
-              "learning_rate" :[1e-4],
-              "intermediate_dim" : [256, 512], # 256, 512
-              "batch_size" : [10],
-              "latent_dim" : [50,128], # 50, 128
-              "epochs" : [1000],
-              "initialiser": ["glorot_uniform"]
-              }
-
-    # #CONFIG FAUST
+    # config = {"modelName": ["DeepVAE"],
+    #           "dataName": ["Femur"],
+    #           "trainingScheme": ["LOOCV"],
+    #           "activations": ["leakyRelu"],
+    #           "learning_rate" :[1e-4],
+    #           "intermediate_dim" : [256, 512], # 256, 512
+    #           "batch_size" : [10],
+    #           "latent_dim" : [50,128], # 50, 128
+    #           "epochs" : [1000],
+    #           "initialiser": ["glorot_uniform"]
+    #           }
+    #CONFIG FAUST
     # config = {"modelName": ["DeepVAE"],
     #           "dataName": ["FAUST"],
     #           "trainingScheme": ["LOOCV", "People", "Poses"], # Only for FAUST
@@ -62,34 +61,41 @@ if __name__ == '__main__':
     #           "learning_rate" :[1e-4],
     #           "intermediate_dim" : [256, 512],
     #           "batch_size" : [25],
-    #           "latent_dim" : [100,128],
-    #           "epochs" : [1000]
+    #           "latent_dim" : [100,128], # perhaps 256 and 256?
+    #           "epochs" : [1000],
+    #           "initialiser": ["glorot_uniform"]
     #           }
 
-    # Experiment 3 Tan/others
+    # Experiment 3 initialisations + epochs
     # Finding the better parameters
-
-    # config = {"modelName": ["DeepVAE"],
+    # #CONFIG Femur
+    # config = {"modelName": ["VAE"], # vanilla
     #           "dataName": ["Femur"],
     #           "trainingScheme": ["LOOCV"],
-    #           "activations": ["leakyRelu"],  # elu?
-    #           "learning_rate" :[1e-4,1e-5],
-    #           "intermediate_dim" : [300],
+    #           "activations": ["leakyRelu"],  # doesnt matter
+    #           "learning_rate" :[1e-4],
+    #           "intermediate_dim" : [300], # doesnt matter
     #           "batch_size" : [10],
-    #           "latent_dim" : [128],
-    #           "epochs" : [1000]
+    #           "latent_dim" : [50],
+    #           "epochs" : [250],
+    #           "initialiser": ["glorot_uniform","he_normal"]
+    #           }
+    # Doesn't make sense to do  more epochs as is stabalised EVEN AT 100
+
     # #CONFIG FAUST
     # config = {"modelName": ["DeepVAE"],
     #           "dataName": ["FAUST"],
     #           "trainingScheme": ["LOOCV"],
-    #           "activations": ["leakyRelu"],  # # elu?
-    #           "learning_rate" :[1e-4,1e-5],
-    #           "intermediate_dim" : [300],
+    #           "activations": ["leakyRelu", "elu"],
+    #           "learning_rate" :[1e-4],
+    #           "intermediate_dim" : [256],
     #           "batch_size" : [10],
-    #           "latent_dim" : [128],
-    #           "epochs" : [1000]
+    #           "latent_dim" : [100],
+    #           "epochs" : [2000],
+    #           "initialiser": ["glorot_uniform","he_normal"]
+    #           }
 
-    # He initialisation, learning rates, epochs?
+    # He initialisation, epochs?
 
 
     configGrid = list(ParameterGrid(config))
